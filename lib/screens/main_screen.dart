@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'qr_scanner_page.dart';
 import 'list_page.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Импортируем пакет для работы с SVG
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -42,13 +43,13 @@ class _MainScreenState extends State<MainScreen> {
         unselectedIconTheme: const IconThemeData(size: 24),
         items: [
           BottomNavigationBarItem(
-            icon: _buildIcon('assets/images/qr_icon.png', false),
-            activeIcon: _buildIcon('assets/images/qr_icon.png', true),
+            icon: _buildIcon('assets/images/qr_icon.svg', false),
+            activeIcon: _buildIcon('assets/images/qr_icon.svg', true),
             label: 'Сканер',
           ),
           BottomNavigationBarItem(
-            icon: _buildIcon('assets/images/list_icon.png', false),
-            activeIcon: _buildIcon('assets/images/list_icon.png', true),
+            icon: _buildIcon('assets/images/list_icon.svg', false),
+            activeIcon: _buildIcon('assets/images/list_icon.svg', true),
             label: 'Список',
           ),
         ],
@@ -61,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
       duration: const Duration(milliseconds: 300),
       width: isActive ? 82 : 64,
       height: isActive ? 64.06 : 50,
-      child: Image.asset(
+      child: SvgPicture.asset(
         assetPath,
         fit: BoxFit.contain,
       ),

@@ -32,6 +32,10 @@ dependencies:
     sdk: flutter
   mobile_scanner: ^3.0.0
   dotted_border: ^2.0.0
+  http: ^0.13.3
+  shared_preferences: ^2.0.6
+  logger: ^1.1.0
+  flutter_svg: ^1.0.0
 
 
 

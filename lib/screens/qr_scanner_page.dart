@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:supply_sync_app/screens/title_widget.dart';
 
 class QRScannerPage extends StatefulWidget {
   const QRScannerPage({Key? key}) : super(key: key);
@@ -16,14 +17,9 @@ class _QRScannerPageState extends State<QRScannerPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          const Text(
-            'SupplySync',
-            style: TextStyle(
-              fontFamily: 'Jura',
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
+          const Align(
+            alignment: Alignment.center, // Центрируем заголовок
+            child: TitleWidget(),
           ),
           Center(
             child: Stack(
@@ -119,7 +115,7 @@ class DashedBorderPainter extends CustomPainter {
         Offset(radius, 0),
         radius: const Radius.circular(radius),
       )
-      ..lineTo(radius + size.height * 0.1 + 5, 0);
+      ..lineTo(radius + size.height * 0.1 + 3, 0);
     _drawDashedPath(canvas, pathTopLeft, dashWidth, dashSpace, paintDashed);
 
     // Нижний правый угол (пунктирная линия)
@@ -131,11 +127,11 @@ class DashedBorderPainter extends CustomPainter {
         radius: const Radius.circular(radius),
         clockwise: false,
       )
-      ..lineTo(size.width, size.height - ((size.height * 0.1) + radius + 5));
+      ..lineTo(size.width, size.height - ((size.height * 0.1) + radius + 3));
     _drawDashedPath(canvas, pathBottomRight, dashWidth, dashSpace, paintDashed);
   }
 
-//   Метод для рисования пунктирного пути
+  // Метод для рисования пунктирного пути
   void _drawDashedPath(Canvas canvas, Path path, double dashWidth, double dashSpace, Paint paint) {
     final pathMetrics = path.computeMetrics();
     for (final metric in pathMetrics) {
@@ -150,8 +146,6 @@ class DashedBorderPainter extends CustomPainter {
       }
     }
   }
-
-
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
