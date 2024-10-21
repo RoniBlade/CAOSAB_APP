@@ -55,14 +55,17 @@ class _ListPageState extends State<ListPage> {
   // Метод для получения данных из API
   Future<void> _fetchItemsFromApi() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://10.0.2.2:8080/api/items'));
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8080/api/items'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
 
       if (response.statusCode == 200) {
-        // Декодируем ответ
         final List<dynamic> fetchedItems = json.decode(response.body);
 
-        // Логируем полученные данные
         logger.d('Полученные данные: $fetchedItems');
 
         setState(() {
@@ -93,6 +96,11 @@ class _ListPageState extends State<ListPage> {
     }
   }
 
+  // Метод для обновления данных при свайпе
+  Future<void> _refreshData() async {
+    await _fetchItemsFromApi(); // Загружаем данные с сервера
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,82 +122,85 @@ class _ListPageState extends State<ListPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Align(
-                        alignment: Alignment.center, // Центрируем заголовок
+                        alignment: Alignment.center,
                         child: TitleWidget(),
                       ),
                       const SizedBox(height: 30),
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 8.0,
-                              ),
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _isExpanded[index] =
-                                        !_isExpanded[index];
-                                  });
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  side: const BorderSide(
-                                      color: Colors.blue, width: 2),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
+                        child: RefreshIndicator(
+                          onRefresh: _refreshData, // Добавляем обновление по свайпу
+                          child: ListView.builder(
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 8.0,
                                 ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
+                                child: OutlinedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _isExpanded[index] =
+                                          !_isExpanded[index];
+                                    });
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    side: const BorderSide(
+                                        color: Colors.blue, width: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: Text(
+                                              items[index]['name'],
+                                              style: const TextStyle(
+                                                fontFamily: 'Jura',
+                                                fontSize: 20,
+                                                color: Colors.purple,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Icon(
+                                            _isExpanded[index]
+                                                ? Icons.arrow_drop_up
+                                                : Icons.arrow_drop_down,
+                                            color: Colors.blue,
+                                            size: 28,
+                                          ),
+                                        ],
+                                      ),
+                                      if (_isExpanded[index])
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8.0),
+                                          padding: const EdgeInsets.only(
+                                              top: 12.0),
                                           child: Text(
-                                            items[index]['name'],
+                                            'Количество на полках: ${items[index]['quantityOnShelves']}.\n'
+                                            'Количество на складе: ${items[index]['quantityInStock']}.',
                                             style: const TextStyle(
                                               fontFamily: 'Jura',
-                                              fontSize: 20,
-                                              color: Colors.purple,
+                                              fontSize: 16,
+                                              color: Colors.black54,
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
-                                        Icon(
-                                          _isExpanded[index]
-                                              ? Icons.arrow_drop_up
-                                              : Icons.arrow_drop_down,
-                                          color: Colors.blue,
-                                          size: 28,
-                                        ),
-                                      ],
-                                    ),
-                                    if (_isExpanded[index])
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 12.0),
-                                        child: Text(
-                                          'Количество на полках: ${items[index]['quantityOnShelves']}.\n'
-                                          'Количество на складе: ${items[index]['quantityInStock']}.',
-                                          style: const TextStyle(
-                                            fontFamily: 'Jura',
-                                            fontSize: 16,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
